@@ -1,48 +1,43 @@
 {
   "name": "10Comic",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "description": "使用Vue+Vant开发的油猴插件脚本，基于浏览器油猴插件的使用。任意网页提供部分漫画网站搜索；漫画分章节下载(可直接下载/压缩下载/拼接下载)，可用于动漫之家、极速漫画、腾讯漫画、哔哩哔哩等30+网站；对个别漫画网站修改阅读样式；可按需编写定义规则JSON导入以支持其他漫画网站",
   "author": "journey3510",
   "private": true,
   "main": "/src/main.js",
+  "type": "module",
   "keywords": [
     "tampermonkey",
-    "webpack",
+    "vite",
     "vue",
     "vant"
   ],
   "scripts": {
-    "dev": "dotenv -e .env.dev -- webpack-dev-server --open --config webpack.dev.js",
-    "build": "dotenv -e .env -- webpack --config webpack.prod.js && dotenv -e .env -- node build.js",
-    "build:dev": "dotenv -e .env.dev -- webpack --config webpack.prod.js && dotenv -e .env.dev -- node build.js",
-    "test": "dotenv -e .env.test -- webpack --config webpack.test.js --watch"
+    "build": "tsc && vite build --mode=prod",
+    "dev": "vite --host --mode=dev",
+    "lint": "eslint . --fix",
+    "preview": "vite preview",
+    "release": "standard-version",
+    "release-major": "standard-version --release-as major",
+    "release-minor": "standard-version --release-as minor",
+    "release-patch": "standard-version --release-as patch"
   },
   "license": "MIT",
   "dependencies": {
     "core-js": "^3.23.3",
-    "element-ui": "^2.15.9",
     "jszip": "^3.10.0",
     "vant": "^2.12.48",
     "vue": "^2.6.12"
   },
   "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "babel-plugin-component": "^1.1.1",
-    "clean-webpack-plugin": "^3.0.0",
-    "css-loader": "^5.0.1",
-    "dotenv-cli": "^4.0.0",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^6.2.2",
-    "file-loader": "^6.2.0",
-    "html-webpack-plugin": "^4.5.0",
-    "less": "^4.1.3",
-    "less-loader": "^11.0.0",
-    "style-loader": "^3.0.0",
-    "vue-loader": "^15.9.5",
-    "vue-template-compiler": "^2.6.12",
-    "webpack": "^5.0.0",
-    "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.4.0"
+    "@antfu/eslint-config": "^4.14.1",
+    "@vitejs/plugin-vue2": "^2.3.3",
+    "eslint": "^9.0.0",
+    "less": "^4.3.0",
+    "standard-version": "^9.5.0",
+    "typescript": "^5.8.3",
+    "unplugin-auto-import": "^19.2.0",
+    "vite": "^6.3.5",
+    "vite-plugin-monkey": "^5.0.8"
   }
 }

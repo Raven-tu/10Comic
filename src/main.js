@@ -1,17 +1,16 @@
-/* eslint-disable no-undef */
 import Vue from 'vue'
-import App from './app.vue'
+import { appLoadinit, getStorage, setinit } from '@/config/setup'
 
+import App from './app.vue'
+import { isDev } from './config'
+
+import { getType, loadStyle2 } from './utils'
 import './styles/global_scss.less'
 import './styles/global.less'
 
-import { isDev } from './config'
-import { loadStyle2, getType } from './utils'
-import { getStorage, appLoadinit, setinit } from '@/config/setup'
-
-var id = null
-var appLoadDefault = null
-var tryLoadTimes = 0
+let id = null
+let appLoadDefault = null
+let tryLoadTimes = 0
 loadMenu(tryLoadTimes)
 
 function loadMenu() {
@@ -28,7 +27,8 @@ function loadMenu() {
     if (appLoadDefault.isShowUI) {
       loadUI(0)
     }
-  } catch (error) {
+  }
+  catch (error) {
     console.log('loadError: ', error)
     loadUI(tryLoadTimes)
   }
@@ -48,7 +48,7 @@ async function loadUI(times) {
     }
   }
 
-  var Vant = await import('vant')
+  const Vant = await import('vant')
   // import ('vant/lib/index.css')
   Vue.use(Vant)
 
@@ -63,15 +63,15 @@ async function loadUI(times) {
     loadStyle2('https://unpkg.com/vant@2.12/lib/index.css').then((res) => {
       new Vue({
         el: `#${id}`,
-        render: h => h(App)
+        render: h => h(App),
       })
     })
-  } else {
-  // eslint-disable-next-line no-undef
+  }
+  else {
     GM_addStyle(GM_getResourceText('vantcss'))
     new Vue({
       el: `#${id}`,
-      render: h => h(App)
+      render: h => h(App),
     })
   }
 }

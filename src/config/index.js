@@ -1,12 +1,10 @@
-/* eslint-disable no-undef */
-const AppName = __APP_NAME__
-const AppVersion = __APP_VERSION__
-const AppEnv = __APP_ENVIRONMENT__
+const { VITE_TAMPERMONKEY_APP_ENVIRONMENT, VITE_APPVERSION: AppVersion } = import.meta.env
+
+const AppEnv = VITE_TAMPERMONKEY_APP_ENVIRONMENT
 const isDev = AppEnv === 'development'
 
 export {
-  AppName,
-  AppVersion,
   AppEnv,
-  isDev
+  AppVersion,
+  isDev,
 }

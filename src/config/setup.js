@@ -1,7 +1,4 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-eval */
-/* eslint-disable no-undef */
-import { AppVersion, isDev } from '@/config/index'
+import { AppVersion, isDev } from './index'
 
 // 脚本存储信息
 const configDefault = {
@@ -10,7 +7,7 @@ const configDefault = {
     isShowUI: false,
     loadHotKey: 'V', // alt + loadHotKey
     rightSize: 100,
-    centerSize: 100
+    centerSize: 100,
   },
   maxChapterNum: 2,
   maxPictureNum: 3,
@@ -21,18 +18,18 @@ const configDefault = {
   imgDownRange: [1, -1], // 章节图片下载范围  第1张至最后1张
   // downHistory: '[]', // 废弃
   userWebInfo: [],
-  rootDir: '10Comic'
+  rootDir: '10Comic',
 }
 
 // 网页 localStorage 存储信息
 const localStorageDefault = {
-  ylComicDownHistory: '[]'
+  ylComicDownHistory: '[]',
 }
 
 // 油猴脚本存储 废弃变量
 const abandonDefault = ['downHistory']
 
-export const appLoadinit = () => {
+export function appLoadinit() {
   if (isDev) {
     return
   }
@@ -56,7 +53,7 @@ export const appLoadinit = () => {
   }
 
   // 油猴存储 去除废弃变量存储数量
-  abandonDefault.forEach(word => {
+  abandonDefault.forEach((word) => {
     if (GM_getValue(word) !== undefined) {
       GM_deleteValue(word)
     }
@@ -68,7 +65,7 @@ export const appLoadinit = () => {
   return true
 }
 
-export const setinit = async() => {
+export async function setinit() {
   return new Promise((resolve, reject) => {
     if (isDev) {
       resolve(false)
@@ -80,7 +77,7 @@ export const setinit = async() => {
   })
 }
 
-export const setStorage = (key, value, key2 = null) => {
+export function setStorage(key, value, key2 = null) {
   // console.log('value: ', value)
   if (key2) {
     const obj = GM_getValue(key)
@@ -91,6 +88,6 @@ export const setStorage = (key, value, key2 = null) => {
   return true
 }
 
-export const getStorage = (key) => {
+export function getStorage(key) {
   return GM_getValue(key)
 }

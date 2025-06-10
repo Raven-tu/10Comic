@@ -16,13 +16,12 @@
   安装地址：[10图漫](https://greasyfork.org/zh-CN/scripts/447819)
 
 - 使用时可通过 快捷键 **Alt + V** 唤起界面
-- 更多使用说明见 [tampermonkey.md](https://github.com/journey3510/10Comic/blob/master/tampermonkey.md) 或 [greasyfork-10图漫](https://greasyfork.org/zh-CN/scripts/447819) 
+- 更多使用说明见 [tampermonkey.md](https://github.com/journey3510/10Comic/blob/master/tampermonkey.md) 或 [greasyfork-10图漫](https://greasyfork.org/zh-CN/scripts/447819)
 <br /><br />
-
 
 ## 脚本开发
 ```
-npm install 
+npm install
 ```
 安装的模块及依赖
 
@@ -46,7 +45,6 @@ npm run test
 3、在Tampermonkey中，点击插件选择`添加新脚本`，然后复制粘贴当前项目下`testTemplate.js`的模板测试代码，并修改模板中"项目保存目录",`Ctrl+S`保存后并启用该脚本，就可用于测试刷新浏览器即可预览效果。
 <br /><br />
 
-
 ### 打包使用
 ```
 npm run build
@@ -56,12 +54,9 @@ npm run build
 打包完成后，在`dist`目录下会生成`10comic.js`文件，再油猴新建脚本，把文件内容复制进行替换全部即可
 <br /><br />
 
-
-
 ### Tampermonkey配置
 可以在`tampermonkey.js`文件，配置Tampermonkey选项。
 <br /><br />
-
 
 ### 漫画网站列表
 | **网站** | **网站首页**                      |
@@ -87,7 +82,7 @@ npm run build
 | 七夕漫画        | http://www.qiximh2.com/               |
 | 拷贝漫画        | https://www.copymanga.tv/         |
 | 风车漫画        | https://www.fengchemh.com/        |
-| 漫画柜       | https://www.manhuagui.com/        | 
+| 漫画柜       | https://www.manhuagui.com/        |
 | 36漫画网       | https://www.36manga.com/        |
 | 古风漫画网       | https://www.gufengmh9.com/   |
 | 动漫戏说        | https://comic.acgn.cc/          |

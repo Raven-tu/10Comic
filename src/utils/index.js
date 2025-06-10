@@ -1,7 +1,7 @@
-import { currentComics } from '@/utils/comics'
 import { getStorage } from '@/config/setup'
+import { currentComics } from '@/utils/comics'
 
-export const loadStyle = (url, name, text) => {
+export function loadStyle(url, name, text) {
   const head = document.getElementsByTagName('head')[0]
   const style = document.createElement('style')
   style.name = name
@@ -10,7 +10,7 @@ export const loadStyle = (url, name, text) => {
   head.appendChild(style)
 }
 
-export const loadStyle2 = (url) => {
+export function loadStyle2(url) {
   return new Promise((resolve, reject) => {
     const head = document.getElementsByTagName('head')[0]
     const link = document.createElement('link')
@@ -27,14 +27,14 @@ export const loadStyle2 = (url) => {
 
 export function trimSpecial(string) {
   if (string !== '') {
-    const pattern = /[`~!@#$^\&*|{}'<>?:;~']/g
+    const pattern = /[`~!@#$^&*|{}'<>?:;]/g
     string = string.replace(pattern, '')
     string = string.replace(/\n|\r/g, '').trim()
   }
   return string
 }
 
-export const getType = (obj) => {
+export function getType(obj) {
   const type = typeof obj
   if (type !== 'object') {
     return type
@@ -42,7 +42,7 @@ export const getType = (obj) => {
   return Object.prototype.toString.call(obj).replace(/^\[object (\S+)\]$/, '$1')
 }
 
-const getFrameContent = async(id, url) => {
+async function getFrameContent(id, url) {
   const iframePromise = new Promise((resolve, reject) => {
     const iframe = document.createElement('iframe')
     iframe.id = id
@@ -52,11 +52,12 @@ const getFrameContent = async(id, url) => {
     iframe.src = url
     document.body.appendChild(iframe)
     if (iframe.attachEvent) {
-      iframe.attachEvent('onload', function() {
+      iframe.attachEvent('onload', () => {
         resolve(iframe.contentDocument.body.outerHTML)
       })
-    } else {
-      iframe.onload = function() {
+    }
+    else {
+      iframe.onload = function () {
         resolve(iframe.contentDocument.body.outerHTML)
       }
     }
@@ -67,15 +68,15 @@ const getFrameContent = async(id, url) => {
       (success) => {
         resolve(success)
       },
-      error => {
+      (error) => {
         console.log(error)
         reject('')
-      }
+      },
     )
   })
 }
 
-export const getImage = async(processData) => {
+export async function getImage(processData) {
   try {
     const url = processData.url
     let response = ''
@@ -83,11 +84,12 @@ export const getImage = async(processData) => {
     if (!currentComics.useFrame) {
       const data = await request({ method: 'get', url, useCookie: processData.isPay })
       response = data.response
-    } else {
+    }
+    else {
       const arr = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'g', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
       const random1 = Math.round(Math.random() * 25) + 0
       const random2 = Math.round(Math.random() * 25) + 0
-      const id = 'ifr' + new Date().getTime() + arr[random1] + arr[random2]
+      const id = `ifr${new Date().getTime()}${arr[random1]}${arr[random2]}`
       response = await getFrameContent(id, url)
       processData.frameId = id
     }
@@ -96,7 +98,8 @@ export const getImage = async(processData) => {
     return new Promise((resolve, reject) => {
       resolve(imgs)
     })
-  } catch (error) {
+  }
+  catch (error) {
     console.log('getImageError: ', error)
     return new Promise((resolve, reject) => {
       reject([])
@@ -104,13 +107,14 @@ export const getImage = async(processData) => {
   }
 }
 
-export const request = async function request(...details) {
+export async function request(...details) {
   let method, url, data, headers, responseType, timeout, useCookie, cookie, onload, onerror, ontimeout, tail
   // 只有一个参数
   if (details.length === 1) {
     ({ method, url, data, headers, responseType, timeout, useCookie, onload, onerror, ontimeout } = details[0])
     useCookie ? cookie = document.cookie : ''
-  } else { // 含多个参数时 [*method, *url, data, headers]
+  }
+  else { // 含多个参数时 [*method, *url, data, headers]
     [method, url, ...tail] = details
     if (tail) {
       tail.length > 0 ? (data = tail[0]) : ''
@@ -131,7 +135,6 @@ export const request = async function request(...details) {
   }
 
   return new Promise((resolve, reject) => {
-    // eslint-disable-next-line no-undef
     GM_xmlhttpRequest({
       method,
       url,
@@ -140,17 +143,17 @@ export const request = async function request(...details) {
       responseType,
       timeout: (timeout || 30 * 1000),
       cookie: (cookie || ''),
-      onload: (onload || function(res) {
+      onload: (onload || function (res) {
         resolve(res)
       }),
-      onerror: (onerror || function(e) {
+      onerror: (onerror || function (e) {
         console.log('request-e: ', e)
         resolve('onerror')
       }),
-      ontimeout: (ontimeout || function() {
+      ontimeout: (ontimeout || function () {
         console.log('ontimeout: ', ontimeout)
         resolve('timeout')
-      })
+      }),
     })
   })
 }
@@ -159,42 +162,43 @@ let rootDir = '10Comic'
 
 try {
   rootDir = getStorage('rootDir')
-} catch (error) {
+}
+catch (error) {
   //
 }
 
-export const downFile = async(...detail) => {
+export async function downFile(...detail) {
   let url, name, headers, onload, onerror, ontimeout
   if (detail.length === 1) {
     ({ url, name, headers, onload, onerror, ontimeout } = detail[0])
-  } else {
+  }
+  else {
     url = detail[0]
     name = detail[1]
   }
-  name = name.replace(/\s+/ig, ' ')
+  name = name.replace(/\s+/g, ' ')
 
   return new Promise((resolve, reject) => {
-    // eslint-disable-next-line no-undef
     GM_download({
       url,
-      name: rootDir + '\\' + name,
-      headers: headers,
-      onload: (onload || function(res) {
+      name: `${rootDir}\\${name}`,
+      headers,
+      onload: (onload || function (res) {
         resolve(true)
       }),
-      onerror: (onerror || function(e) {
+      onerror: (onerror || function (e) {
         console.log('downFile-e: ', e)
         resolve(false)
       }),
-      ontimeout: (ontimeout || function() {
+      ontimeout: (ontimeout || function () {
         resolve(false)
-      })
+      }),
     })
   })
 }
 
-export const addZeroForNum = (num, bitNum) => {
-  let newNum = num + ''
+export function addZeroForNum(num, bitNum) {
+  let newNum = `${num}`
   if (newNum.length < bitNum) {
     const zeroStr = new Array(bitNum + 1).join('0')
     newNum = zeroStr + newNum
@@ -205,22 +209,23 @@ export const addZeroForNum = (num, bitNum) => {
 }
 
 // 网站匹配
-export const getdomain = (url) => {
+export function getdomain(url) {
   if (!url) {
     url = window.location.href
   }
   let hname = ''
-  var domain = url.split('/')
+  const domain = url.split('/')
   if (domain[2]) {
     hname = domain[2]
-  } else {
+  }
+  else {
     hname = ''
   }
   return hname
 }
 
-export const parseToDOM = (str) => {
-  var div = document.createElement('div')
+export function parseToDOM(str) {
+  const div = document.createElement('div')
   if (typeof str === 'string') {
     div.innerHTML = str
   }
@@ -228,7 +233,7 @@ export const parseToDOM = (str) => {
 }
 
 export function delay(n) {
-  return new Promise(function(resolve) {
+  return new Promise((resolve) => {
     setTimeout(resolve, n * 1000)
   })
 }
@@ -243,7 +248,8 @@ export async function doThingsEachSecond(secondNum, somethimefunc) {
     res = somethimefunc()
     if (res) {
       i = secondNum // res 成功了，还没有结束，偷偷改个时间吧
-    } else {
+    }
+    else {
       await delay(1)
     }
     i++
@@ -256,7 +262,7 @@ export async function doThingsEachSecond(secondNum, somethimefunc) {
 // * conditions  结束滚动窗口条件函数数组
 export async function startScroll(scrollWindow, conditions) {
   return new Promise((resolve, reject) => {
-    const id = setInterval(function() {
+    const id = setInterval(() => {
       scrollWindow.scrollBy(0, 50)
       conditions.forEach((func, index) => {
         // 执行func
@@ -269,7 +275,7 @@ export async function startScroll(scrollWindow, conditions) {
   })
 }
 
-export const funstrToData = function funstrToData(str, reg) {
+export function funstrToData(str, reg) {
   const group = str.matchAll(reg)
   const func = []
   for (const item of group) {
@@ -285,7 +291,7 @@ export const funstrToData = function funstrToData(str, reg) {
   if (!func[1]) {
     func[1] = '()'
   }
-  const code = '(' + func[0] + ')' + func[1]
+  const code = `(${func[0]})${func[1]}`
   // code =>
   // (function (str){
   //   //此时会输出 aaaaa
@@ -297,7 +303,7 @@ export const funstrToData = function funstrToData(str, reg) {
   return data
 }
 
-export const getCookie = (cookieName) => {
+export function getCookie(cookieName) {
   const strCookie = document.cookie
   const cookieList = strCookie.split(';')
 

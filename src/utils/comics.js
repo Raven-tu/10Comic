@@ -1,20 +1,17 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-empty */
 /* eslint-disable no-eval */
-
-// eslint-disable-next-line no-unused-vars
-import { request, parseToDOM, funstrToData, getType, trimSpecial, getdomain, addZeroForNum, delay, doThingsEachSecond, startScroll } from '@/utils/index'
 
 import { getStorage } from '@/config/setup'
 
-export const searchFunTemplate_1 = async(data, keyword) => {
-  // eslint-disable-next-line prefer-const
+import { addZeroForNum, delay, doThingsEachSecond, funstrToData, getdomain, getType, parseToDOM, request, startScroll, trimSpecial } from '@/utils/index'
+
+export async function searchFunTemplate_1(data, keyword) {
   let { search_add_url, search_pre, alllist_dom_css, minlist_dom_css, namelink_index, img_src, use_background, img_reg, match_reg_num } = data.searchTemplate_1
   namelink_index ? namelink_index-- : namelink_index = 0
   let searchUrl = ''
   if (search_pre) {
     searchUrl = search_pre + search_add_url + keyword
-  } else {
+  }
+  else {
     searchUrl = data.homepage + search_add_url + keyword
   }
   let headers = ''
@@ -26,7 +23,7 @@ export const searchFunTemplate_1 = async(data, keyword) => {
 
   const domList = dom.querySelectorAll(minlist_dom_css)
   const searchList = []
-  domList.forEach(element => {
+  domList.forEach((element) => {
     const obj = {}
     try {
       obj.name = element.querySelector('a').title
@@ -35,13 +32,15 @@ export const searchFunTemplate_1 = async(data, keyword) => {
       // 获取封面图片地址
       if (!use_background) {
         if (!img_reg) {
-          const reg2 = eval('/' + img_src + `=('|")(.*?)('|")` + '/')
+          const reg2 = eval(`/${img_src}=('|")(.*?)('|")` + `/`)
           obj.imageUrl = element.innerHTML.match(reg2)[2]
-        } else {
+        }
+        else {
           obj.imageUrl = element.innerHTML.match(img_reg)[match_reg_num]
         }
         // obj.imageUrl = element.querySelector('img').getAttribute(img_src)
-      } else {
+      }
+      else {
         obj.imageUrl = element.innerHTML.match(/background.*?(url)\('?(.*?)'?\)/)[2]
       }
 
@@ -49,13 +48,15 @@ export const searchFunTemplate_1 = async(data, keyword) => {
       if (obj.name === '') {
         let titleArr = element.innerHTML.match(/title=('|")(.*?)('|")/);
 
-        (titleArr && titleArr.length >= 2) ? (obj.name = titleArr[2])
+        (titleArr && titleArr.length >= 2)
+          ? (obj.name = titleArr[2])
           : (titleArr = element.innerHTML.match(/alt=('|")(.*?)('|")/),
-          (titleArr && titleArr.length >= 2) ? obj.name = titleArr[2] : '')
+            (titleArr && titleArr.length >= 2) ? obj.name = titleArr[2] : '')
         // 文本 name  innerText
         obj.name === '' ? obj.name = element.querySelectorAll('a')[namelink_index].innerText : ''
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.log('error: ', data.webName, error)
     }
     searchList.push(obj)
@@ -76,12 +77,13 @@ export const comicsWebInfo = [
     webDesc: '需要登录',
     readtype: 1,
     useFrame: true,
-    getComicInfo: async function(comic_name) {
+    async getComicInfo(comic_name) {
       const domain = getdomain()
       let text = ''
       if (domain === 'm.idmzj.com') {
         text = document.body.outerHTML
-      } else {
+      }
+      else {
         // 判断登录后是否有章节信息
         const chapterList = unsafeWindow.__NUXT__?.data?.getCationDeatils?.comicInfo?.chapterList
         if (chapterList) {
@@ -103,7 +105,7 @@ export const comicsWebInfo = [
         comic_list_2 = JSON.parse(str2)[1].data
       }
       const allList = []
-      comic_list.forEach(element => {
+      comic_list.forEach((element) => {
         const url = `https://m.idmzj.com/view/${element.comic_id}/${element.id}.html/`
         const data = {
           comicName: comic_name,
@@ -113,11 +115,11 @@ export const comicsWebInfo = [
           readtype: this.readtype,
           isPay: false,
           isSelect: false,
-          characterType: 'one'
+          characterType: 'one',
         }
         allList.push(data)
       })
-      comic_list_2.forEach(element => {
+      comic_list_2.forEach((element) => {
         const url = `https://m.idmzj.com/view/${element.comic_id}/${element.id}.html/`
         const data = {
           comicName: comic_name,
@@ -127,13 +129,13 @@ export const comicsWebInfo = [
           readtype: this.readtype,
           isPay: false,
           isSelect: false,
-          characterType: 'many'
+          characterType: 'many',
         }
         allList.push(data)
       })
       return allList
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const chapterList = unsafeWindow.__NUXT__?.data?.getCationDeatils?.comicInfo?.chapterList
 
       if (chapterList) {
@@ -142,14 +144,15 @@ export const comicsWebInfo = [
         const imageArr = iframeWindow?.__NUXT__?.data?.getchapters?.data?.chapterInfo?.page_url
         document.getElementById(processData.frameId).remove()
         return imageArr
-      } else {
+      }
+      else {
         // 保留 m.dmzj.com 获取方法
-        const str = context.match(/mReader.initData\(.*"page_url":(.*?"]).*\)/)[1]
+        const str = context.match(/mReader.initData\(.*"page_url":(.*?"\]).*\)/)[1]
         const imgs = JSON.parse(str)
         document.getElementById(processData.frameId).remove()
         return imgs
       }
-    }
+    },
   },
   {
     domain: ['m.dmzj.com', 'm.idmzj.com'],
@@ -158,12 +161,12 @@ export const comicsWebInfo = [
     comicNameCss: '#comicName',
     chapterCss: '#list',
     readtype: 1,
-    getImgs: async function(context) {
-      const str = context.match(/mReader.initData\(.*"page_url":(.*?"]).*\)/)[1]
+    async getImgs(context) {
+      const str = context.match(/mReader.initData\(.*"page_url":(.*?"\]).*\)/)[1]
       const imgs = JSON.parse(str)
       console.log('imgs: ', imgs)
       return imgs
-    }
+    },
   },
   {
     domain: ['comic.idmzj.com', 'www.idmzj.com'],
@@ -172,9 +175,9 @@ export const comicsWebInfo = [
     comicNameCss: 'h1',
     chapterCss: '.cartoon_online_border, .list_con_li',
     readtype: 1,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const group = processData.url.match(/idmzj.com\/(.*?)\/(\d+)/)
-      const DATA = funstrToData(context, /(function[\s\S]+?return [\s\S]*?}})(\([\s\S]+?\))/g)
+      const DATA = funstrToData(context, /(function[\s\S]+?return [\s\S]*?\}\})(\([\s\S]+?\))/g)
       const params = DATA.pinia['app-store'].publicParams
 
       let reqUrl = `https://comic.idmzj.com/api/v1/s_comic/chapter/detail?channel=${params.channel}&app_name=${params.app_name}&version=${params.timestamp}&timestamp=${params.timestamp}&uid&comic_py=${group[1]}&chapter_id=${group[2]}`
@@ -186,7 +189,7 @@ export const comicsWebInfo = [
       const { response } = await request('get', reqUrl)
       const imgs = JSON.parse(response).data.chapterInfo.page_url
       return imgs
-    }
+    },
   },
   {
     domain: ['mangabz.com', 'www.mangabz.com'],
@@ -195,24 +198,25 @@ export const comicsWebInfo = [
     comicNameCss: 'p.detail-info-title',
     chapterCss: '#chapterlistload',
     headers: {
-      referer: 'https://mangabz.com/'
+      referer: 'https://mangabz.com/',
     },
     downHeaders: {
-      referer: 'https://mangabz.com/'
+      referer: 'https://mangabz.com/',
     },
     readtype: 0,
     searchTemplate_1: {
       search_add_url: 'search?title=',
       alllist_dom_css: '.container .mh-list',
       minlist_dom_css: 'li',
-      img_src: 'src'
+      img_src: 'src',
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       let group; let page = 1
       if (processData.otherData) {
         group = processData.otherData.group
-      } else {
-        group = context.match(/MANGABZ_MID=(\d+?);.*MANGABZ_CID=(\d+?);.*MANGABZ_IMAGE_COUNT=(\d+?);.*MANGABZ_VIEWSIGN="(.*?)".*MANGABZ_VIEWSIGN_DT="(.*?)"/)
+      }
+      else {
+        group = context.match(/MANGABZ_MID=(\d+);.*MANGABZ_CID=(\d+);.*MANGABZ_IMAGE_COUNT=(\d+);.*MANGABZ_VIEWSIGN="(.*?)".*MANGABZ_VIEWSIGN_DT="(.*?)"/)
       }
       if (processData.imgIndex !== undefined) {
         page = processData.imgIndex + 1
@@ -220,12 +224,12 @@ export const comicsWebInfo = [
       const reqUrl = `https://mangabz.com/m${group[2]}/chapterimage.ashx?cid=${group[2]}&page=${page}&key=&_cid=${group[2]}&_mid=${group[1]}&_dt=${group[5]}&_sign=${group[4]}`
 
       const { responseText } = await request('get', reqUrl)
-      const codeText = funstrToData(responseText, /(function.*return .*?})(\(.*?{}\))/g)
-      const imgUrlArr = funstrToData(codeText, /(function.*return .*?})/g)
+      const codeText = funstrToData(responseText, /(function.*return .*?\})(\(.*?\{\}\))/g)
+      const imgUrlArr = funstrToData(codeText, /(function.*return .*?\})/g)
 
       const otherData = { group }
       return { imgUrlArr, nextPageUrl: null, imgCount: group[3], otherData }
-    }
+    },
   },
   {
     domain: 'manhua.zaimanhua.com',
@@ -235,13 +239,13 @@ export const comicsWebInfo = [
     chapterCss: '.tab-content-selected',
     readtype: 1,
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframeWindow = document.getElementById(processData.frameId).contentWindow
       await delay(1.5)
       const page_url = iframeWindow.__NUXT__.data.getChapters.data.chapterInfo.page_url
       document.getElementById(processData.frameId).remove()
       return page_url
-    }
+    },
   },
   {
     domain: 'www.dm5.com',
@@ -253,23 +257,24 @@ export const comicsWebInfo = [
     payKey: '-lock',
     readtype: 0,
     headers: {
-      referer: 'https://www.dm5.com/'
+      referer: 'https://www.dm5.com/',
     },
     downHeaders: {
-      referer: ''
+      referer: '',
     },
     searchTemplate_1: {
       search_add_url: 'search?title=',
       alllist_dom_css: '.mh-list',
       minlist_dom_css: 'li',
-      use_background: true
+      use_background: true,
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       let group; let page = 1
       if (processData.otherData) {
         group = processData.otherData.group
-      } else {
-        group = context.match(/DM5_MID=(\d+?);.*DM5_CID=(\d+?);.*DM5_IMAGE_COUNT=(\d+?);.*DM5_VIEWSIGN="(.*?)".*DM5_VIEWSIGN_DT="(.*?)"/)
+      }
+      else {
+        group = context.match(/DM5_MID=(\d+);.*DM5_CID=(\d+);.*DM5_IMAGE_COUNT=(\d+);.*DM5_VIEWSIGN="(.*?)".*DM5_VIEWSIGN_DT="(.*?)"/)
       }
       if (processData.imgIndex !== undefined) {
         page = processData.imgIndex + 1
@@ -277,11 +282,11 @@ export const comicsWebInfo = [
       const reqUrl = `https://www.dm5.com/ch1-${group[2]}/chapterfun.ashx?cid=${group[2]}&page=${page}&key=&language=1&gtk=6&_cid=${group[2]}&_mid=${group[1]}&_dt=${group[5].replaceAll(' ', '+').replaceAll(':', '%3A')}&_sign=${group[4]}`
       const { responseText } = await request({ method: 'get', url: reqUrl, useCookie: processData.isPay })
 
-      const codeText = funstrToData(responseText, /(function.*return .*?})(\(.*?{}\))/g)
-      const imgUrlArr = funstrToData(codeText, /(function.*return .*?})/g)
+      const codeText = funstrToData(responseText, /(function.*return .*?\})(\(.*?\{\}\))/g)
+      const imgUrlArr = funstrToData(codeText, /(function.*return .*?\})/g)
       const otherData = { group }
       return { imgUrlArr, nextPageUrl: null, imgCount: group[3], otherData }
-    }
+    },
   },
   {
     domain: 'tel.dm5.com',
@@ -293,28 +298,29 @@ export const comicsWebInfo = [
     payKey: '-lock',
     readtype: 0,
     headers: {
-      referer: 'https://tel.dm5.com/'
+      referer: 'https://tel.dm5.com/',
     },
     downHeaders: {
-      referer: ''
+      referer: '',
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       let group; let page = 1
       if (processData.otherData) {
         group = processData.otherData.group
-      } else {
-        group = context.match(/DM5_MID=(\d+?);.*DM5_CID=(\d+?);.*DM5_IMAGE_COUNT=(\d+?);.*DM5_VIEWSIGN="(.*?)".*DM5_VIEWSIGN_DT="(.*?)"/)
+      }
+      else {
+        group = context.match(/DM5_MID=(\d+);.*DM5_CID=(\d+);.*DM5_IMAGE_COUNT=(\d+);.*DM5_VIEWSIGN="(.*?)".*DM5_VIEWSIGN_DT="(.*?)"/)
       }
       if (processData.imgIndex !== undefined) {
         page = processData.imgIndex + 1
       }
       const reqUrl = `https://tel.dm5.com/ch1-${group[2]}/chapterfun.ashx?cid=${group[2]}&page=${page}&key=&language=1&gtk=6&_cid=${group[2]}&_mid=${group[1]}&_dt=${group[5].replaceAll(' ', '+').replaceAll(':', '%3A')}&_sign=${group[4]}`
       const { responseText } = await request({ method: 'get', url: reqUrl, useCookie: processData.isPay })
-      const codeText = funstrToData(responseText, /(function.*return .*?})(\(.*?{}\))/g)
-      const imgUrlArr = funstrToData(codeText, /(function.*return .*?})/g)
+      const codeText = funstrToData(responseText, /(function.*return .*?\})(\(.*?\{\}\))/g)
+      const imgUrlArr = funstrToData(codeText, /(function.*return .*?\})/g)
       const otherData = { group }
       return { imgUrlArr, nextPageUrl: null, imgCount: group[3], otherData }
-    }
+    },
   },
   {
     domain: 'godamh.com',
@@ -325,9 +331,9 @@ export const comicsWebInfo = [
     chapterNameReg: /data-ct="(.*?)"/,
     readtype: 1,
     headers: {
-      referer: 'https://godamh.com/'
+      referer: 'https://godamh.com/',
     },
-    getImgs: async function(context) {
+    async getImgs(context) {
       const ms = context.match(/data-ms="(\d+)".*data-cs="(\d+)"/)[1]
       const cs = context.match(/data-ms="(\d+)".*data-cs="(\d+)"/)[2]
 
@@ -336,11 +342,11 @@ export const comicsWebInfo = [
 
       const info = JSON.parse(responseText).data.info
       const domain = info.images.line === 2 ? 'https://f40-1-4.g-mh.online' : 'https://t40-1-4.g-mh.online'
-      const images = info.images.images.map(element => {
+      const images = info.images.images.map((element) => {
         return domain + element.url
       })
       return images
-    }
+    },
   },
   {
     domain: 'www.comemh8.com',
@@ -350,7 +356,7 @@ export const comicsWebInfo = [
     chapterCss: '#play_0 ul ',
     readtype: 1,
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframeWindow = document.getElementById(processData.frameId).contentWindow
       const arr = iframeWindow.getUrlpics()
       const host = iframeWindow.gethost()
@@ -358,7 +364,7 @@ export const comicsWebInfo = [
       console.log('image: ', image)
       document.getElementById(processData.frameId).remove()
       return image
-    }
+    },
   },
   {
     domain: 'www.rumanhua1.com',
@@ -368,13 +374,13 @@ export const comicsWebInfo = [
     chapterCss: '.chapterList .chapterlistload ul',
     readtype: 1,
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframeDom = document.getElementById(processData.frameId).contentDocument
       await delay(1.5)
       const image = [...iframeDom.querySelectorAll('.main_img img')].map(img => img.dataset.src ?? img.src)
       document.getElementById(processData.frameId).remove()
       return image
-    }
+    },
   },
 
   {
@@ -386,9 +392,9 @@ export const comicsWebInfo = [
     chapterNameReg: /alt="(.*?)"/,
     readtype: 1,
     headers: {
-      referer: 'https://www.dongmanmanhua.cn/'
+      referer: 'https://www.dongmanmanhua.cn/',
     },
-    getImgs: async function(context) {
+    async getImgs(context) {
       const str = context.match(/class="viewer_lst[\s\S]*?input/)[0]
       const imgobj = str.matchAll(/img src[\s\S]*?data-url="(.*?)"/g)
       const imgUrlArr = []
@@ -396,7 +402,7 @@ export const comicsWebInfo = [
         imgUrlArr.push(item[1])
       }
       return imgUrlArr
-    }
+    },
   },
   {
     domain: 'www.gaonaojin.com',
@@ -405,17 +411,17 @@ export const comicsWebInfo = [
     comicNameCss: 'h1',
     chapterCss: '#detail-list-select-1',
     readtype: 1,
-    getImgs: function(context) {
+    getImgs(context) {
       const imgDomain = context.match(/imgDomain = '(.*?)'/)[1]
-      let imgStr = funstrToData(context, /(function.*?return \S})(\(.*?{}\))/g)
+      let imgStr = funstrToData(context, /(function.*?return \S\})(\(.*?\{\}\))/g)
       imgStr = imgStr.match(/\[[\s\S]+?\]/)[0]
       const imgArray = JSON.parse(imgStr)
       const imgarr = []
-      imgArray.forEach(element => {
+      imgArray.forEach((element) => {
         imgarr.push(imgDomain + element)
       })
       return imgarr
-    }
+    },
   },
   {
     domain: 'www.webtoons.com',
@@ -427,9 +433,9 @@ export const comicsWebInfo = [
     readtype: 1,
     webDesc: '？需要魔法？',
     headers: {
-      referer: 'https://www.webtoons.com/'
+      referer: 'https://www.webtoons.com/',
     },
-    getImgs: async function(context) {
+    async getImgs(context) {
       const str = context.match(/class="viewer_lst[\s\S]*?class="viewer_ad_area"/)[0]
       const imgobj = str.matchAll(/img src[\s\S]*?data-url="(.*?)"/g)
       const imgUrlArr = []
@@ -437,7 +443,7 @@ export const comicsWebInfo = [
         imgUrlArr.push(item[1])
       }
       return imgUrlArr
-    }
+    },
   },
   {
     domain: 'www.manshiduo.net',
@@ -446,14 +452,14 @@ export const comicsWebInfo = [
     comicNameCss: '.comic-title',
     chapterCss: 'ul.chapter__list-box',
     readtype: 1,
-    getImgs: async function(context) {
+    async getImgs(context) {
       const imgobj = context.matchAll(/data-original="(.*?)"/g)
       const imgUrlArr = []
       for (const item of imgobj) {
         imgUrlArr.push(item[1])
       }
       return imgUrlArr
-    }
+    },
   },
   {
     domain: 'comic.naver.com',
@@ -465,9 +471,9 @@ export const comicsWebInfo = [
     webDesc: '找到漫画目录页再使用, 新打开页面需“重载列表”',
     readtype: 1,
     headers: {
-      referer: 'https://comic.naver.com/'
+      referer: 'https://comic.naver.com/',
     },
-    getImgs: async function(context) {
+    async getImgs(context) {
       const str = context.match(/class="wt_viewer"[\s\S]*?(<\/div>)/)[0]
       const imgobj = str.matchAll(/img src="(.*?)"/g)
       const imgUrlArr = []
@@ -475,7 +481,7 @@ export const comicsWebInfo = [
         imgUrlArr.push(item[1])
       }
       return imgUrlArr
-    }
+    },
   },
   {
     domain: 'ac.qq.com',
@@ -492,30 +498,30 @@ export const comicsWebInfo = [
       search_add_url: 'Comic/searchList?search=',
       alllist_dom_css: '.mod_book_list',
       minlist_dom_css: 'li',
-      img_src: 'data-original'
+      img_src: 'data-original',
     },
-    getImgs: function(context) {
+    getImgs(context) {
       let nonce = context.match(/<script>\s*window.*?=(.*?)?;/)[1]
       nonce = eval(nonce)
       const dataStr = context.match(/DATA.*?'(.*)?'/)[1]
       const data = dataStr.split('')
-      nonce = nonce.match(/\d+[a-zA-Z]+/g)
+      nonce = nonce.match(/\d+[a-z]+/gi)
       let len = nonce.length
       let locate = null
       let str = ''
       while (len--) {
-        locate = parseInt(nonce[len]) & 255
+        locate = Number.parseInt(nonce[len]) & 255
         str = nonce[len].replace(/\d+/g, '')
         data.splice(locate, str.length)
       }
       const chapterStr = data.join('')
       const chapterObj = JSON.parse(window.atob(chapterStr))
       const imgarr = []
-      chapterObj.picture.forEach(element => {
+      chapterObj.picture.forEach((element) => {
         imgarr.push(element.url)
       })
       return imgarr
-    }
+    },
   },
   {
     domain: 'manga.bilibili.com',
@@ -524,10 +530,10 @@ export const comicsWebInfo = [
     comicNameCss: '.manga-info h1.manga-title',
     chapterCss: '.episode-list .list-header',
     headers: {
-      referer: 'https://manga.bilibili.com/'
+      referer: 'https://manga.bilibili.com/',
     },
     readtype: 1,
-    searchFun: async function(keyword) {
+    async searchFun(keyword) {
       const searchUrl = 'https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web'
       const data = new FormData()
       data.append('key_word', keyword)
@@ -536,10 +542,10 @@ export const comicsWebInfo = [
       const { responseText } = await request('post', searchUrl, data, this.headers)
       const list = JSON.parse(responseText).data.list
       const searchList = []
-      list.forEach(element => {
+      list.forEach((element) => {
         const obj = {}
         obj.name = element.org_title
-        obj.url = this.homepage + 'detail/mc' + element.id
+        obj.url = `${this.homepage}detail/mc${element.id}`
         obj.imageUrl = element.vertical_cover
         searchList.push(obj)
       })
@@ -547,34 +553,34 @@ export const comicsWebInfo = [
         resolve(searchList)
       })
     },
-    getComicInfo: async function() {
+    async getComicInfo() {
       const comicid = window.location.href.match(/detail\/(\D*)(\d*)/)[2]
       const data = new FormData()
-      data.append('comic_id', parseInt(comicid))
+      data.append('comic_id', Number.parseInt(comicid))
       const getUrl = 'https://manga.bilibili.com/twirp/comic.v1.Comic/ComicDetail?device=pc&platform=web'
       const { responseText } = await request('post', getUrl, data)
       const comic = JSON.parse(responseText)
       const comicName = trimSpecial(comic.data.title)
       const comic_list = comic.data.ep_list
       const allList = []
-      comic_list.forEach(element => {
+      comic_list.forEach((element) => {
         const url = `https://manga.bilibili.com/mc${comicid}/${element.id}`
         const data = {
-          comicName: comicName,
-          chapterName: trimSpecial(element.short_title + ' ' + element.title),
+          comicName,
+          chapterName: trimSpecial(`${element.short_title} ${element.title}`),
           chapterNumStr: '',
           url,
           readtype: this.readtype,
           isPay: element.is_locked,
-          isSelect: false
+          isSelect: false,
         }
         allList.push(data)
       })
       return allList.reverse()
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const { url, isPay } = processData
-      const chapter_id = parseInt(url.match(/.com\/(\D*)(\d*)\/(\d*)/)[3])
+      const chapter_id = Number.parseInt(url.match(/.com\/(\D*)(\d*)\/(\d*)/)[3])
       const data = new FormData()
       data.append('ep_id', chapter_id)
       const postUrl = 'https://manga.bilibili.com/twirp/comic.v1.Comic/GetImageIndex?device=pc&platform=web'
@@ -585,7 +591,7 @@ export const comicsWebInfo = [
       const saveImg = []
       const query = []
       const imgPostUrl = 'https://manga.bilibili.com/twirp/comic.v1.Comic/ImageToken?device=pc&platform=web'
-      imgArray.forEach(item => {
+      imgArray.forEach((item) => {
         query.push(item.path)
       })
       const img_data = new FormData()
@@ -595,11 +601,11 @@ export const comicsWebInfo = [
       console.log('img_data_res: ', img_data_res)
 
       const imgObjArr = JSON.parse(img_data_res.responseText).data
-      imgObjArr.forEach(imgObj => {
+      imgObjArr.forEach((imgObj) => {
         saveImg.push(`${imgObj.url}?token=${imgObj.token}`)
       })
       return saveImg
-    }
+    },
   },
   {
     domain: 'www.bilibilicomics.com',
@@ -608,38 +614,38 @@ export const comicsWebInfo = [
     comicNameCss: 'h1.manga-title',
     chapterCss: '.episode-list .list-header',
     headers: {
-      referer: 'https://www.bilibilicomics.com/'
+      referer: 'https://www.bilibilicomics.com/',
     },
     webDesc: '？需要魔法？',
     readtype: 1,
-    getComicInfo: async function() {
+    async getComicInfo() {
       const comicid = window.location.href.match(/detail\/(\D*)(\d*)/)[2]
       const data = new FormData()
-      data.append('comic_id', parseInt(comicid))
+      data.append('comic_id', Number.parseInt(comicid))
       const getUrl = 'https://www.bilibilicomics.com/twirp/comic.v1.Comic/ComicDetail?device=pc&platform=web'
       const { responseText } = await request('post', getUrl, data)
       const comic = JSON.parse(responseText)
       const comicName = trimSpecial(comic.data.title)
       const comic_list = comic.data.ep_list
       const allList = []
-      comic_list.forEach(element => {
+      comic_list.forEach((element) => {
         const url = `https://www.bilibilicomics.com/mc${comicid}/${element.id}`
         const data = {
-          comicName: comicName,
-          chapterName: trimSpecial(element.short_title + ' ' + element.title),
+          comicName,
+          chapterName: trimSpecial(`${element.short_title} ${element.title}`),
           chapterNumStr: '',
           url,
           readtype: this.readtype,
           isPay: element.is_locked,
-          isSelect: false
+          isSelect: false,
         }
         allList.push(data)
       })
       return allList.reverse()
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const { url, isPay } = processData
-      const chapter_id = parseInt(url.match(/.com\/(\D*)(\d*)\/(\d*)/)[3])
+      const chapter_id = Number.parseInt(url.match(/.com\/(\D*)(\d*)\/(\d*)/)[3])
       const data = new FormData()
       data.append('ep_id', chapter_id)
       const postUrl = 'https://www.bilibilicomics.com/twirp/comic.v1.Comic/GetImageIndex?device=pc&platform=web'
@@ -649,18 +655,18 @@ export const comicsWebInfo = [
       const saveImg = []
       const query = []
       const imgPostUrl = 'https://www.bilibilicomics.com/twirp/comic.v1.Comic/ImageToken?device=pc&platform=web'
-      imgArray.forEach(item => {
+      imgArray.forEach((item) => {
         query.push(item.path)
       })
       const img_data = new FormData()
       img_data.append('urls', JSON.stringify(query))
       const img_data_res = await request('post', imgPostUrl, img_data)
       const imgObjArr = JSON.parse(img_data_res.responseText).data
-      imgObjArr.forEach(imgObj => {
+      imgObjArr.forEach((imgObj) => {
         saveImg.push(`${imgObj.url}?token=${imgObj.token}`)
       })
       return saveImg
-    }
+    },
   },
   {
     domain: 'komiic.com',
@@ -671,29 +677,29 @@ export const comicsWebInfo = [
     chapterNameReg: / class="serial">(.*?)<\/span>/,
     webDesc: 'SPA页面, 新页面需“重载列表”重新匹配新名称',
     headers: {
-      referer: 'https://komiic.com/'
+      referer: 'https://komiic.com/',
     },
     readtype: 1,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const { url } = processData
       const chapter_id = url.match(/chapter\/(\d*)\/images/)[1]
       const postUrl = 'https://komiic.com/api/query'
       const data = {
-        'operationName': 'imagesByChapterId',
-        'variables': {
-          'chapterId': chapter_id
+        operationName: 'imagesByChapterId',
+        variables: {
+          chapterId: chapter_id,
         },
-        'query': 'query imagesByChapterId($chapterId: ID!) {\n  imagesByChapterId(chapterId: $chapterId) {\n    id\n    kid\n    height\n    width\n    __typename\n  }\n}\n'
+        query: 'query imagesByChapterId($chapterId: ID!) {\n  imagesByChapterId(chapterId: $chapterId) {\n    id\n    kid\n    height\n    width\n    __typename\n  }\n}\n',
       }
       const headers = { 'Content-Type': 'application/json' }
       const { responseText } = await request({ method: 'post', url: postUrl, headers, data: JSON.stringify(data) })
       const img_data = JSON.parse(responseText).data.imagesByChapterId
       const saveImg = []
-      img_data.forEach(element => {
-        saveImg.push('https://komiic.com/api/image/' + element.kid)
+      img_data.forEach((element) => {
+        saveImg.push(`https://komiic.com/api/image/${element.kid}`)
       })
       return saveImg
-    }
+    },
   },
   {
     domain: ['www.darpou.com', 'darpou.com'],
@@ -702,7 +708,7 @@ export const comicsWebInfo = [
     comicNameCss: '.fed-part-eone.fed-font-xvi a',
     chapterCss: '.fed-play-item.fed-drop-item.fed-visible .fed-part-rows:nth-child(2)',
     readtype: 1,
-    getImgs: async function(context) {
+    async getImgs(context) {
       const txtUrl = context.match(/http(\S*).txt/gi)[0]
       const txtRes = await request('get', txtUrl)
       let txtContext = txtRes.responseText
@@ -710,7 +716,7 @@ export const comicsWebInfo = [
       txtContext = txtContext.replace(/img.manga8.xyz/g, 'img3.manga8.xyz')
       const imgReg = /http(\S*)jpg/g
       return txtContext.match(imgReg)
-    }
+    },
   },
   {
     domain: ['qiximh2.com', 'www.qiximh2.com'],
@@ -720,7 +726,7 @@ export const comicsWebInfo = [
     chapterCss: '.cy_plist ul',
     readtype: 1,
     useFrame: true,
-    getImgs: function(context, processData) {
+    getImgs(context, processData) {
       const str = document.getElementById(processData.frameId).contentDocument.body.outerHTML
       const imgStr = str.match(/main_img[\s\S]*?class="cy_intro_r/)[0]
       const group = imgStr.matchAll(/data-src="(.*?)"/g)
@@ -730,7 +736,7 @@ export const comicsWebInfo = [
       }
       document.getElementById(processData.frameId).remove()
       return imgarr
-    }
+    },
   },
   {
     domain: ['www.copymanga.tv', 'www.mangacopy.com'],
@@ -740,13 +746,13 @@ export const comicsWebInfo = [
     chapterCss: '.tab-content > div.active > ul:nth-child(1)',
     readtype: 1,
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframeDom = document.getElementById(processData.frameId).contentDocument
       const iframeWindow = document.getElementById(processData.frameId).contentWindow
 
       // 存在加载慢的可能性，10秒内持续检测是否存在数据
-      await doThingsEachSecond(10, () => parseInt(iframeDom.querySelector('.comicCount')?.innerText))
-      const totalNum = parseInt(iframeDom.querySelector('.comicCount')?.innerText)
+      await doThingsEachSecond(10, () => Number.parseInt(iframeDom.querySelector('.comicCount')?.innerText))
+      const totalNum = Number.parseInt(iframeDom.querySelector('.comicCount')?.innerText)
       console.log('totalNum: ', totalNum)
       const contentEle = iframeDom.querySelector('ul.comicContent-list')
 
@@ -765,7 +771,7 @@ export const comicsWebInfo = [
       document.getElementById(processData.frameId).remove()
 
       return [...contentEle.querySelectorAll('img')].map(img => img.dataset.src ?? img.src)
-    }
+    },
   },
   {
     domain: 'www.fengchemh.com',
@@ -775,12 +781,12 @@ export const comicsWebInfo = [
     chapterCss: '#ewave-playlist-1',
     readtype: 1,
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframeWindow = document.getElementById(processData.frameId).contentWindow
       const images = iframeWindow.params.images
       document.getElementById(processData.frameId).remove()
       return images
-    }
+    },
   },
   {
     domain: ['manhuagui.com'],
@@ -790,20 +796,20 @@ export const comicsWebInfo = [
     chapterCss: '.chapter-list',
     readtype: 1,
     // context 章节请求正文
-    getImgs: function(context) {
+    getImgs(context) {
       // 获取到 html请求正文 context 的一段js代码字符 并执行这代码获取到 图片地址信息
       // window["\x65\x76\x61\x6c"]  => eval
       // (function[\s\S]+?return \S*?}) 匿名函数部分
       // (\([\s\S]+?{}\)) 需要的参数
-      const dataStr = funstrToData(context, /window\["\\x65\\x76\\x61\\x6c"\]\((function[\s\S]+?return \S*?})(\([\s\S]+?{}\))/g)
-      const matchObj = /"files":(?<files>.*?),"finished".*"path":"(?<path>.*?)".*"e":(?<e>\d*),"m":"(?<m>.*)"}/g.exec(dataStr)
-      var { files, path, e, m } = matchObj.groups
+      const dataStr = funstrToData(context, /window\["\\x65\\x76\\x61\\x6c"\]\((function[\s\S]+?return \S*?\})(\([\s\S]+?\{\}\))/g)
+      const matchObj = /"files":(?<files>.*?),"finished".*"path":"(?<path>.*?)".*"e":(?<e>\d*),"m":"(?<m>.*)"\}/.exec(dataStr)
+      let { files, path, e, m } = matchObj.groups
       files = JSON.parse(files)
-      const image = files.map(ele => {
-        return 'https://i.hamreus.com' + path + ele + '?e=' + e + '&m=' + m
+      const image = files.map((ele) => {
+        return `https://i.hamreus.com${path}${ele}?e=${e}&m=${m}`
       })
       return image
-    }
+    },
   },
   {
     domain: 'www.36manga.com',
@@ -813,7 +819,7 @@ export const comicsWebInfo = [
     chapterCss: '#chapter-list-4 li:not(:first-of-type)',
     readtype: 1,
     webDesc: '？可访问 ？',
-    getImgs: function(context) {
+    getImgs(context) {
       const group = context.matchAll(/chapterImages = ([\s\S]+?);var chapterPath = "([\s\S]+?)";var chapterPrice/g)
       let imgarr = []
       let middleStr = ''
@@ -823,11 +829,11 @@ export const comicsWebInfo = [
       }
       if (imgarr[0].search('http') === -1) {
         imgarr = imgarr.map((item) => {
-          return 'https://img001.arc-theday.com/' + middleStr + item
+          return `https://img001.arc-theday.com/${middleStr}${item}`
         })
       }
       return imgarr
-    }
+    },
   },
   {
     domain: 'www.gufengmh9.com',
@@ -841,27 +847,27 @@ export const comicsWebInfo = [
       search_add_url: 'search/?keywords=',
       alllist_dom_css: '.book-list',
       minlist_dom_css: 'li',
-      img_src: 'src'
+      img_src: 'src',
     },
-    getImgs: async function(context) {
+    async getImgs(context) {
       const group = context.matchAll(/chapterImages = (.*?);var chapterPath = "(.*?)"/g)
       const strArr = []
       for (const item of group) {
         strArr.push(item[1])
         strArr.push(item[2])
       }
-      const josnRes = await request('get', this.homepage + 'js/config.js')
+      const josnRes = await request('get', `${this.homepage}js/config.js`)
       const josnContext = josnRes.responseText
-      const imageDomian = josnContext.match(/"domain":\["(.*?)"]/)[1]
+      const imageDomian = josnContext.match(/"domain":\["(.*?)"\]/)[1]
       let imgarr = JSON.parse(strArr[0])
       imgarr = imgarr.map((item) => {
         if (imgarr[0].search('http') === -1) {
-          return imageDomian + '/' + strArr[1] + item
+          return `${imageDomian}/${strArr[1]}${item}`
         }
         return item
       })
       return imgarr
-    }
+    },
   },
   {
     domain: 'comic.acgn.cc',
@@ -870,14 +876,14 @@ export const comicsWebInfo = [
     comicNameCss: '.list_navbox h3 a',
     chapterCss: '#comic_chapter > ul',
     readtype: 1,
-    getImgs: async function(context) {
+    async getImgs(context) {
       const group = context.matchAll(/_src="(.*?)"/g)
       const imgArray = []
       for (const item of group) {
         imgArray.push(item[1])
       }
       return imgArray
-    }
+    },
   },
   {
     domain: 'www.77mh.xyz',
@@ -887,17 +893,17 @@ export const comicsWebInfo = [
     chapterCss: '.ar_list_coc .ar_rlos_bor',
     readtype: 1,
     downHeaders: {
-      Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+      Accept: 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
     },
     searchTemplate_1: {
       search_add_url: 'k.php?k=',
       search_pre: 'https://so.77mh.xyz/',
       alllist_dom_css: '.ar_list_co ul',
       minlist_dom_css: 'dl',
-      img_src: 'src'
+      img_src: 'src',
     },
-    getImgs: async function(context, processData) {
-      const imgStr = funstrToData(context, /(function[\s\S]+?return \S})(\([\s\S]+?{}\))/g)
+    async getImgs(context, processData) {
+      const imgStr = funstrToData(context, /(function[\s\S]+?return \S\})(\([\s\S]+?\{\}\))/g)
       const params = imgStr.match(/var atsvr="(.*?)";var msg='(.*?)'.*img_s=(.*?);.*colist_(.*?).htm/)
       let imgArray = params[2].split('|')
 
@@ -913,7 +919,7 @@ export const comicsWebInfo = [
         })
       }
       return imgArray
-    }
+    },
   },
   {
     domain: 'www.mhxqiu4.com',
@@ -922,12 +928,12 @@ export const comicsWebInfo = [
     comicNameCss: '.cy_title h1',
     chapterCss: '.cy_plist #mh-chapter-list-ol-0',
     readtype: 1,
-    getImgs: function(context) {
-      let imgStr = funstrToData(context, /(function.*?return \S})(\(.*?{}\))/g)
+    getImgs(context) {
+      let imgStr = funstrToData(context, /(function.*?return \S\})(\(.*?\{\}\))/g)
       imgStr = imgStr.match(/\[[\s\S]+?\]/)[0]
       const imgArray = JSON.parse(imgStr)
       return imgArray
-    }
+    },
   },
 
   {
@@ -937,14 +943,14 @@ export const comicsWebInfo = [
     comicNameCss: '.comic-title.j-comic-title',
     chapterCss: '.chapter__list-box.clearfix',
     readtype: 1,
-    getImgs: function(context) {
+    getImgs(context) {
       const group = context.matchAll(/data-original="(.*?)"/g)
       const imgArray = []
       for (const item of group) {
         imgArray.push(item[1])
       }
       return imgArray
-    }
+    },
   },
   {
     domain: 'www.yymanhua.com',
@@ -954,10 +960,10 @@ export const comicsWebInfo = [
     chapterCss: '.detail-list-form-con',
     readtype: 1,
     headers: {
-      referer: 'https://www.yymanhua.com/'
+      referer: 'https://www.yymanhua.com/',
     },
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframe = document.getElementById(processData.frameId).contentWindow
       const cid = iframe.YYMANHUA_CID
       let page
@@ -976,15 +982,15 @@ export const comicsWebInfo = [
         const url = `https://www.yymanhua.com/m${cid}/chapterimage.ashx?cid=${cid}&page=${page}&key=&_cid=${_cid}&_mid=${_mid}&_dt=${_dt}&_sign=${_sign}`
         const { response } = await request({ method: 'get', url })
         console.log('response: ', response)
-        const funStr = funstrToData(response, /(function.*?return \S;})(\(.*?{}\))/g)
-        const newImgs = funstrToData(funStr, /(function.*?return .*?})()/g)
+        const funStr = funstrToData(response, /(function.*?return \S;\})(\(.*?\{\}\))/g)
+        const newImgs = funstrToData(funStr, /(function.*?return .*?\})()/g)
         imageArray.push(...newImgs)
         currentCount = imageArray.length
         await delay(0.5)
       }
       document.getElementById(processData.frameId).remove()
       return imageArray
-    }
+    },
   },
   {
     domain: ['www.xmanhua.com', 'xmanhua.com'],
@@ -994,10 +1000,10 @@ export const comicsWebInfo = [
     chapterCss: '.detail-list-form-con',
     readtype: 1,
     headers: {
-      referer: 'https://xmanhua.com/'
+      referer: 'https://xmanhua.com/',
     },
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframe = document.getElementById(processData.frameId).contentWindow
 
       const cid = iframe.XMANHUA_CID
@@ -1015,15 +1021,15 @@ export const comicsWebInfo = [
         console.log('page: ', page)
         const url = `https://xmanhua.com/m${cid}/chapterimage.ashx?cid=${cid}&page=${page}&key=&_cid=${_cid}&_mid=${_mid}&_dt=${_dt}&_sign=${_sign}`
         const { response } = await request({ method: 'get', url })
-        const funStr = funstrToData(response, /(function.*?return \S;})(\(.*?{}\))/g)
-        const newImgs = funstrToData(funStr, /(function.*?return .*?})()/g)
+        const funStr = funstrToData(response, /(function.*?return \S;\})(\(.*?\{\}\))/g)
+        const newImgs = funstrToData(funStr, /(function.*?return .*?\})()/g)
         imageArray.push(...newImgs)
         currentCount = imageArray.length
         await delay(0.5)
       }
       document.getElementById(processData.frameId).remove()
       return imageArray
-    }
+    },
   },
   {
     domain: 'www.cartoonmad.com',
@@ -1033,19 +1039,19 @@ export const comicsWebInfo = [
     chapterCss: '#info',
     readtype: 1,
     downHeaders: {
-      referer: 'https://www.cartoonmad.com/'
+      referer: 'https://www.cartoonmad.com/',
     },
-    getImgs: function(context) {
-      const preImgUrl = 'https:' + context.match(/<img src="(.*?)001.*?"/)[1]
+    getImgs(context) {
+      const preImgUrl = `https:${context.match(/<img src="(.*?)001.*?"/)[1]}`
       const suffix = context.match(/<img src="(.*?)001\.(.*?)"/)[2]
       const pageTotalNum = context.match(/<\/option>.*html">.*?(\d+).*?<\/select>/)[1]
       const imgArray = []
       for (let i = 0; i < pageTotalNum; i++) {
-        const imgUrl = preImgUrl + addZeroForNum(i + 1, 3) + '.' + suffix
+        const imgUrl = `${preImgUrl + addZeroForNum(i + 1, 3)}.${suffix}`
         imgArray.push(imgUrl)
       }
       return imgArray
-    }
+    },
   },
   {
     domain: 'www.zuimh.com',
@@ -1055,11 +1061,11 @@ export const comicsWebInfo = [
     chapterCss: '.chapter-body.clearfix #chapter-list-1',
     readtype: 1,
     readCssText: '.img_info {display: none;}.tbCenter img {border: 0px;}',
-    getImgs: async function(context) {
-      const imgStr = context.match(/var chapterImages = ([[\s\S]+?])[\s\S]+?var chapterPath/)[1]
+    async getImgs(context) {
+      const imgStr = context.match(/var chapterImages = ([\s\S]+?\])[\s\S]+?var chapterPath/)[1]
       const imgs = eval(imgStr)
       return imgs
-    }
+    },
   },
   {
     domain: 'www.6mh1.com',
@@ -1069,12 +1075,12 @@ export const comicsWebInfo = [
     chapterCss: '#chapter-list1',
     readtype: 1,
     useFrame: true,
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const iframe = document.getElementById(processData.frameId).contentWindow
       const newImgs = JSON.parse(JSON.stringify(iframe.newImgs))
       document.getElementById(processData.frameId).remove()
       return newImgs
-    }
+    },
   },
   {
     domain: 'www.mhxin.com',
@@ -1084,7 +1090,7 @@ export const comicsWebInfo = [
     chapterCss: '.zj_list_con #chapter-list-1',
     readtype: 1,
     readCssText: '.img_info {display: none;}.comic_wraCon img {border: 0px;margin-top:0px;}',
-    getImgs: async function(context) {
+    async getImgs(context) {
       const group = context.matchAll(/chapterImages = (.*?);var chapterPath = "(.*?)"/g)
       const strArr = []
       for (const item of group) {
@@ -1092,17 +1098,17 @@ export const comicsWebInfo = [
         strArr.push(item[2])
       }
       let imgarr = JSON.parse(strArr[0])
-      const josnRes = await request('get', this.homepage + 'js/config.js')
+      const josnRes = await request('get', `${this.homepage}js/config.js`)
       const josnContext = josnRes.responseText
-      const imageDomian = josnContext.match(/"domain":\["(.*?)"]/)[1]
+      const imageDomian = josnContext.match(/"domain":\["(.*?)"\]/)[1]
       imgarr = imgarr.map((item) => {
         if (imgarr[0].search('http') === -1) {
-          return imageDomian + '/' + strArr[1] + item
+          return `${imageDomian}/${strArr[1]}${item}`
         }
         return item
       })
       return imgarr
-    }
+    },
   },
   {
     domain: ['www.baozimhcn.com', 'www.baozimh.com', 'cn.baozimhcn.com'],
@@ -1117,9 +1123,9 @@ export const comicsWebInfo = [
       alllist_dom_css: '.pure-g.classify-items',
       minlist_dom_css: 'div.comics-card',
       img_reg: /src=('|")(.*?)\?/,
-      match_reg_num: 2
+      match_reg_num: 2,
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const imgArray = []
       const nextReg = /next_chapter"><a href="(.*)?"[\s\S]{1,10}点击进入下一页/
       let hasNext = false
@@ -1139,7 +1145,7 @@ export const comicsWebInfo = [
         }
       } while (hasNext)
       return imgArray
-    }
+    },
   },
   {
     domain: 'www.guoman.net',
@@ -1148,14 +1154,14 @@ export const comicsWebInfo = [
     comicNameCss: '.detail-info > .detail-info-title',
     chapterCss: '#chapterlistload',
     readtype: 1,
-    getImgs: async function(context) {
+    async getImgs(context) {
       const group = context.matchAll(/<img.*src="(.*?)"/g)
       const imgArray = []
       for (const item of group) {
         imgArray.push(item[1])
       }
       return imgArray
-    }
+    },
   },
   {
     domain: ['zcymh.com', 'www.zcymh.com'],
@@ -1164,14 +1170,14 @@ export const comicsWebInfo = [
     comicNameCss: 'h1',
     chapterCss: '#detail-chapter .bd',
     readtype: 1,
-    getImgs: async function(context) {
+    async getImgs(context) {
       const group = context.matchAll(/chapter-pid="[\s\S]*?<img src="(.*?)"/g)
       const imgArray = []
       for (const item of group) {
         imgArray.push(item[1])
       }
       return imgArray
-    }
+    },
   },
   {
     domain: 'www.kanman.com',
@@ -1180,15 +1186,15 @@ export const comicsWebInfo = [
     comicNameCss: 'h1.title',
     chapterCss: '#j_chapter_list',
     readtype: 1,
-    getImgs: async function(context) {
+    async getImgs(context) {
       const imgStr = context.match(/chapter_img_list:(\[.*?\])/)[1]
       let imgArray = eval(imgStr)
-      imgArray = imgArray.map(element => {
+      imgArray = imgArray.map((element) => {
         element = element.replace('hw-chapter2', 'hw-chapter3')
         return element
       })
       return imgArray
-    }
+    },
   },
   {
     domain: 'www.kuaikanmanhua.com',
@@ -1199,39 +1205,39 @@ export const comicsWebInfo = [
     readtype: 1,
     hasSpend: true,
     useFrame: true,
-    getComicInfo: async function() {
+    async getComicInfo() {
       const list = unsafeWindow.__NUXT__.data[0].comics
       const comicName = unsafeWindow.__NUXT__.data[0].topicInfo.title
       const newList = []
-      list.forEach(element => {
+      list.forEach((element) => {
         const url = `https://www.kuaikanmanhua.com/web/comic/${element.id}/`
         const data = {
-          comicName: comicName,
+          comicName,
           chapterName: element.title,
           chapterNumStr: '',
           url,
           readtype: this.readtype,
           isPay: element.locked,
-          isSelect: false
+          isSelect: false,
         }
         newList.push(data)
       })
       return newList
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const str = document.getElementById(processData.frameId).contentDocument.body.outerHTML
-      const data = funstrToData(str, /(function.*}})(\(.*)\);<\/script>/g)
+      const data = funstrToData(str, /(function.*\}\})(\(.*)\);<\/script>/g)
       let comicImages = data.data[0].comicInfo.comicImages
       const imgarr = []
       if (!comicImages) {
         comicImages = data.data[0].imgList
       }
-      comicImages.forEach(element => {
+      comicImages.forEach((element) => {
         imgarr.push(element.url)
       })
       document.getElementById(processData.frameId).remove()
       return imgarr
-    }
+    },
   },
   {
     domain: 'm.kuaikanmanhua.com',
@@ -1243,38 +1249,38 @@ export const comicsWebInfo = [
     hasSpend: true,
     showInList: false,
     useFrame: true,
-    getComicInfo: async function() {
+    async getComicInfo() {
       const code = document.body.outerHTML.match(/\(function\(a,b,c.*?(\)\))/g)[0]
       const data = eval(code)
       const list = data.data[0].comicList
       const comicName = trimSpecial(data.data[0].topicInfo.title)
       const newlist = list.map((item) => {
         return {
-          comicName: comicName,
+          comicName,
           chapterName: trimSpecial(item.title),
           chapterNumStr: '',
-          url: 'https://m.kuaikanmanhua.com/mobile/comics/' + item.id,
+          url: `https://m.kuaikanmanhua.com/mobile/comics/${item.id}`,
           readtype: 1,
           isPay: !item.is_free,
-          isSelect: false
+          isSelect: false,
         }
       })
       return newlist
     },
-    getImgs: async function(context, processData) {
+    async getImgs(context, processData) {
       const str = document.getElementById(processData.frameId).contentDocument.body.outerHTML
-      const data = funstrToData(str, /(function.*}})(\(.*)\);<\/script>/g)
+      const data = funstrToData(str, /(function.*\}\})(\(.*)\);<\/script>/g)
       let comicImages = data.data[0].comicInfo.comicImages
       const imgarr = []
       if (!comicImages) {
         comicImages = data.data[0].imgList
       }
-      comicImages.forEach(element => {
+      comicImages.forEach((element) => {
         imgarr.push(element.url)
       })
       document.getElementById(processData.frameId).remove()
       return imgarr
-    }
+    },
   },
   {
     domain: 'www.manhua88888.com',
@@ -1283,18 +1289,18 @@ export const comicsWebInfo = [
     comicNameCss: '.content .title',
     chapterCss: '#j_chapter_list',
     readtype: 1,
-    getImgs: function(context) {
+    getImgs(context) {
       const group = context.matchAll(/data-echo="(.*?)"/g)
       const imgArray = []
       for (const item of group) {
         imgArray.push(item[1])
       }
       return imgArray
-    }
-  }
+    },
+  },
 ]
 
-export const getWebList = () => {
+export function getWebList() {
   const userWebInfo = eval(getStorage('userWebInfo') || [])
   const originalInfo = comicsWebInfo
   return { originalInfo, userWebInfo }
@@ -1303,12 +1309,13 @@ export const getWebList = () => {
 export let currentComics = null
 
 // 网站匹配
-export const matchWeb = (url) => {
+export function matchWeb(url) {
   let hname = ''
-  var domain = url.split('/')
+  const domain = url.split('/')
   if (domain[2]) {
     hname = domain[2]
-  } else {
+  }
+  else {
     hname = ''
   }
   // 原漫画列表匹配
@@ -1349,15 +1356,15 @@ export const matchWeb = (url) => {
 }
 
 function funSplicing(funStr) {
-  const getImgsGroup = funStr.match(/((async )?function\(.*{)([\s\S]*)/)
+  const getImgsGroup = funStr.match(/((async )?function\(.*\{)([\s\S]*)/)
   const funHead = getImgsGroup[1]
   const funTail = getImgsGroup[3]
   let insertCode = ''
   if (funStr.includes('funstrToData')) {
-    insertCode = insertCode + funstrToData.toString() + '\n'
+    insertCode = `${insertCode + funstrToData.toString()}\n`
   }
   if (funStr.includes('request')) {
-    insertCode = insertCode + 'const request = window.request' + '\n'
+    insertCode = `${insertCode}const request = window.request` + `\n`
   }
   const code = `
   (function(){
@@ -1371,4 +1378,3 @@ function funSplicing(funStr) {
   // console.log('fun: ', fun.toString())
   return fun
 }
-

@@ -1,6 +1,6 @@
 import JSZip from 'jszip'
-import { getImage, downFile, addZeroForNum, request } from '@/utils/index'
 import { getStorage } from '@/config/setup'
+import { addZeroForNum, downFile, getImage, request } from '@/utils/index'
 
 // 多个任务并行执行的队列
 // https://juejin.cn/post/6844903961728647181
@@ -24,10 +24,10 @@ export default class Queue {
   }
 
   /**
-     * 执行一个任务
-     * @param { number } index
-     */
-  async * exeDown(index) {
+   * 执行一个任务
+   * @param { number } index
+   */
+  async* exeDown(index) {
     const { readtype, downChapterName } = this.worker[index]
     const _this = this
 
@@ -55,37 +55,40 @@ export default class Queue {
       try {
         imgs = await getImage(processData)
         const imgDownRange = getStorage('imgDownRange')
-        const start = parseInt(imgDownRange[0])
-        const end = parseInt(imgDownRange[1])
+        const start = Number.parseInt(imgDownRange[0])
+        const end = Number.parseInt(imgDownRange[1])
         if (end === -1) {
           imgs = imgs.slice(start - 1)
-        } else {
+        }
+        else {
           imgs = imgs.slice(start - 1, end + 1)
         }
         // eslint-disable-next-line eqeqeq
         imgs == [] ? this.worker[index].hasError = true : ''
         this.worker[index].imgs = imgs
         this.worker[index].totalNumber = imgs.length
-      } catch (error) {
+      }
+      catch (error) {
         this.worker[index].hasError = true
       }
       yield this.down(index)
-        .then(function() {
+        .then(() => {
           afterDown(index)
         })
         //
-    } else {
+    }
+    else {
       yield this.down2(index)
-        .then(function() {
+        .then(() => {
           afterDown(index)
         })
     }
   }
 
   /**
-     * 添加到任务队列
-     * @param { Array<Array<any>> } list: 任务队列
-     */
+   * 添加到任务队列
+   * @param { Array<Array<any>> } list: 任务队列
+   */
   addList(list) {
     for (const item of list) {
       this.list.unshift(item)
@@ -99,12 +102,12 @@ export default class Queue {
   // 直接下载图片 Promise
   addImgDownPromise(index, imgurl, imgIndex, newHeaders, retryTimes) {
     const headers = {
-      referer: this.worker[index].url
+      referer: this.worker[index].url,
     }
     return new Promise((resolve, reject) => {
       const _this = this
       if (!imgurl) {
-        _this.worker[index].progress = parseInt(_this.worker[index].imgIndex / _this.worker[index].totalNumber * 100)
+        _this.worker[index].progress = Number.parseInt(_this.worker[index].imgIndex / _this.worker[index].totalNumber * 100)
         _this.refresh()
         resolve(false)
       }
@@ -114,21 +117,22 @@ export default class Queue {
         url: imgurl,
         responseType: 'blob',
         headers: newHeaders || headers,
-        timeout: 60 * 1000
+        timeout: 60 * 1000,
       }).then((res) => {
-        const name = this.worker[index].comicName + '\\' + this.worker[index].downChapterName + '\\' +
-        addZeroForNum(imgIndex, this.imgIndexBitNum) + '.'
+        const name = `${this.worker[index].comicName}\\${this.worker[index].downChapterName}\\${
+          addZeroForNum(imgIndex, this.imgIndexBitNum)}.`
 
         let suffix = this.getSuffix(res.finalUrl)
 
         _this.worker[index].successNum = _this.worker[index].successNum + 1
-        _this.worker[index].progress = parseInt(_this.worker[index].imgIndex / _this.worker[index].totalNumber * 100)
+        _this.worker[index].progress = Number.parseInt(_this.worker[index].imgIndex / _this.worker[index].totalNumber * 100)
         _this.refresh()
 
         let newurl = ''
         if (res === 'onerror' || res === 'timeout') {
           if (retryTimes !== 2) {
-            if (retryTimes === undefined) retryTimes = 0
+            if (retryTimes === undefined)
+              retryTimes = 0
             return resolve(_this.addImgDownPromise(index, imgurl, imgIndex, newHeaders, ++retryTimes))
           }
 
@@ -136,13 +140,15 @@ export default class Queue {
           suffix = 'txt'
           const newBlob = new Blob([imgurl], { type: 'text/plain' })
           newurl = window.URL.createObjectURL(newBlob)
-        } else {
+        }
+        else {
           newurl = window.URL.createObjectURL(res.response)
         }
         downFile(newurl, name + suffix).then((downRes) => {
           if (downRes) {
             resolve(true)
-          } else {
+          }
+          else {
             _this.worker[index].hasError = true
             resolve(false)
           }
@@ -154,7 +160,7 @@ export default class Queue {
   // 请求图片Blob Promise (后用于压缩)
   addImgPromise(index, imgurl, newHeaders, retryTimes) {
     const headers = {
-      referer: this.worker[index].url
+      referer: this.worker[index].url,
     }
     return new Promise((resolve, reject) => {
       const _this = this
@@ -163,7 +169,8 @@ export default class Queue {
         return resolve({
           blob: 1,
           imgurl,
-          suffix: '' })
+          suffix: '',
+        })
       }
 
       const suffix = this.getSuffix(imgurl)
@@ -173,44 +180,49 @@ export default class Queue {
         responseType: 'blob',
         headers: newHeaders || headers,
         timeout: 60 * 1000,
-        onload: function(gmRes) {
+        onload(gmRes) {
           _this.worker[index].successNum = _this.worker[index].successNum + 1
-          _this.worker[index].progress = parseInt(_this.worker[index].imgIndex / _this.worker[index].totalNumber * 100)
+          _this.worker[index].progress = Number.parseInt(_this.worker[index].imgIndex / _this.worker[index].totalNumber * 100)
           _this.refresh()
           resolve({
             blob: gmRes.response,
             imgurl,
-            suffix: suffix })
+            suffix,
+          })
         },
-        onerror: function(e) {
+        onerror(e) {
           if (retryTimes !== 2) {
-            if (retryTimes === undefined) retryTimes = 0
+            if (retryTimes === undefined)
+              retryTimes = 0
             return resolve(_this.addImgPromise(index, imgurl, newHeaders, ++retryTimes))
           }
           _this.worker[index].hasError = true
           resolve({
             blob: 1,
             imgurl,
-            suffix: '' })
+            suffix: '',
+          })
         },
-        ontimeout: function() {
+        ontimeout() {
           if (retryTimes !== 2) {
-            if (retryTimes === undefined) retryTimes = 0
+            if (retryTimes === undefined)
+              retryTimes = 0
             return resolve(_this.addImgPromise(index, imgurl, newHeaders, ++retryTimes))
           }
           resolve({
             blob: 0,
             imgurl,
-            suffix: '' })
-        }
+            suffix: '',
+          })
+        },
       })
     })
   }
 
   /**
-     * 下载图片
-     * @param { workerId } workerId: 任务id
-     */
+   * 下载图片
+   * @param { workerId } workerId: 任务id
+   */
 
   // 网站翻页阅读
   async down2(workerId) {
@@ -222,7 +234,7 @@ export default class Queue {
     const { imgUrlArr, nextPageUrl, imgCount, otherData } = await getImage(processData)
     this.worker[workerId].otherData = otherData
 
-    this.worker[workerId].totalNumber = parseInt(imgCount)
+    this.worker[workerId].totalNumber = Number.parseInt(imgCount)
     const beforeDownLen = imgUrlArr.length
     // console.log('下载前', beforeDownLen, imgIndex, totalNumber)
 
@@ -236,20 +248,21 @@ export default class Queue {
         const imgIndex = ++this.worker[workerId].imgIndex
         if (downType) {
           promise.push(this.addImgPromise(workerId, imgUrlArr[0], downHeaders))
-        } else {
+        }
+        else {
           promise.push(this.addImgDownPromise(workerId, imgUrlArr[0], imgIndex, downHeaders))
         }
         imgUrlArr.shift()
       }
 
       const res = await Promise.all(promise)
-      res.forEach(element => {
+      res.forEach((element) => {
         this.workerDownInfo[workerId].push(element)
       })
     }
 
     const newImgIndex = this.worker[workerId].imgIndex
-    if (beforeDownLen !== 0 && nextPageUrl !== '' && newImgIndex < parseInt(imgCount)) {
+    if (beforeDownLen !== 0 && nextPageUrl !== '' && newImgIndex < Number.parseInt(imgCount)) {
       this.worker[workerId].url = nextPageUrl
       return new Promise((resolve, reject) => {
         // 休息一下？
@@ -257,19 +270,22 @@ export default class Queue {
           resolve(this.down2(workerId))
         }, 1000)
       })
-    } else {
+    }
+    else {
       // 压缩
       if (downType === 1) {
         const result = await this.makeZip(workerId)
         return new Promise((resolve, reject) => {
           resolve(result)
         })
-      } else if (downType === 2) { // 拼接
+      }
+      else if (downType === 2) { // 拼接
         await this.combineImages(workerId)
         return new Promise((resolve, reject) => {
           resolve()
         })
-      } else {
+      }
+      else {
         return new Promise((resolve, reject) => {
           resolve(1)
         })
@@ -289,7 +305,8 @@ export default class Queue {
       const imgIndex = ++this.worker[workerId].imgIndex
       if (downType) {
         promise.push(this.addImgPromise(workerId, imgs[0], downHeaders))
-      } else {
+      }
+      else {
         promise.push(this.addImgDownPromise(workerId, imgs[0], imgIndex, downHeaders))
       }
       this.worker[workerId].imgs.shift()
@@ -298,7 +315,7 @@ export default class Queue {
 
     const res = await Promise.all(promise)
 
-    res.forEach(element => {
+    res.forEach((element) => {
       this.workerDownInfo[workerId].push(element)
     })
 
@@ -317,12 +334,14 @@ export default class Queue {
       return new Promise((resolve, reject) => {
         resolve(result)
       })
-    } else if (downType === 2) { // 拼接
+    }
+    else if (downType === 2) { // 拼接
       await this.combineImages(workerId)
       return new Promise((resolve, reject) => {
         resolve()
       })
-    } else {
+    }
+    else {
       return new Promise((resolve, reject) => {
         resolve(1)
       })
@@ -353,7 +372,7 @@ export default class Queue {
           downType: item.downType, // 下载方式 0：直接  1：压缩  2：拼接
           hasError: false,
           downHeaders: item.downHeaders,
-          otherData: undefined // 自定义存储其他下载数据
+          otherData: undefined, // 自定义存储其他下载数据
         }
         this.worker[i] = worker
         this.workerDownInfo[i] = []
@@ -393,23 +412,22 @@ export default class Queue {
         const suffix = item.suffix
         if (imgblob === 1 || imgblob === 0) {
           const txtBlob = new Blob([item.imgurl], { type: 'text/plain' })
-          zip.file(addZeroForNum(index + 1, this.imgIndexBitNum) + '.txt', txtBlob, { blob: true })
+          zip.file(`${addZeroForNum(index + 1, this.imgIndexBitNum)}.txt`, txtBlob, { blob: true })
           return
         }
-        zip.file(addZeroForNum(index + 1, this.imgIndexBitNum) + '.' + suffix, imgblob, { blob: true })
+        zip.file(`${addZeroForNum(index + 1, this.imgIndexBitNum)}.${suffix}`, imgblob, { blob: true })
       })
 
       zip.generateAsync({
         type: 'blob',
         compression: 'DEFLATE',
         compressionOptions: {
-          level: 9
-        }
+          level: 9,
+        },
       }).then((zipblob) => {
-        const name = comicName + '\\' + downChapterName + '.zip'
+        const name = `${comicName}\\${downChapterName}.zip`
         this.downloadFile(name, zipblob)
         resolve()
-        return
       })
     })
   }
@@ -440,7 +458,7 @@ export default class Queue {
 
     async function asyncCanvas(canvas, name) {
       return new Promise((resolve, reject) => {
-        canvas.toBlob(async function(imgblob) {
+        canvas.toBlob(async (imgblob) => {
           await _this.downloadFile(name, imgblob)
           resolve()
         }, 'image/jpeg', 0.8)
@@ -452,7 +470,7 @@ export default class Queue {
       // 去除不是图片类型
       if (data.blob === 1 || data.blob === 0 || !data.blob.type.includes('image')) {
         this.worker[workerId].hasError = true
-        const error_name = comicName + '\\' + downChapterName + '\\error_' + addZeroForNum(index + 1, this.imgIndexBitNum) + '.txt'
+        const error_name = `${comicName}\\${downChapterName}\\error_${addZeroForNum(index + 1, this.imgIndexBitNum)}.txt`
         const imgurl = this.workerDownInfo[workerId][index].imgurl
         const newBlob = new Blob([imgurl], { type: 'text/plain' })
         _this.downloadFile(error_name, newBlob)
@@ -475,7 +493,8 @@ export default class Queue {
         const newobj = { num: ++imgNum, width: image.width, height: image.height, img: [image] }
         curHeight = image.height
         saveImg.push(newobj)
-      } else {
+      }
+      else {
         curHeight += image.height
         saveImg[imgNum].height += image.height
         saveImg[imgNum].img.push(image)
@@ -495,9 +514,9 @@ export default class Queue {
       for (let len = 0; len < item.img.length; len++) {
         const element = item.img[len]
         context.drawImage(element, 0, offsetY, element.width, element.height)
-        offsetY = offsetY + parseInt(element.height)
+        offsetY = offsetY + Number.parseInt(element.height)
       }
-      const name = comicName + '\\' + downChapterName + '\\' + addZeroForNum(item.num + 1, this.imgIndexBitNum) + '.jpg'
+      const name = `${comicName}\\${downChapterName}\\${addZeroForNum(item.num + 1, this.imgIndexBitNum)}.jpg`
       await asyncCanvas(canvas, name)
     }
 
