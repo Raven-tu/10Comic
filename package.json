@@ -24,8 +24,8 @@
   },
   "license": "MIT",
   "dependencies": {
-    "jszip": "^3.10.1",
-    "vant": "^2.13.8",
+    "jszip": "3.10.1",
+    "vant": "2.13.8",
     "vue": "2.7.14"
   },
   "devDependencies": {
