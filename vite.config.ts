@@ -57,11 +57,6 @@ export default ({ command = 'dev', mode = 'dev' }) => {
             'resource': {
               vantcss: 'https://unpkg.com/vant@2.12/lib/index.css',
             },
-            // 'require': [
-            //   'https://unpkg.com/vue@2.6.12/dist/vue.min.js',
-            //   'https://unpkg.com/vant@2.12/lib/vant.min.js',
-            //   'https://unpkg.com/jszip@3.7.1/dist/jszip.min.js'
-            // ],
             'connect': '*',
             'grant': [
               'unsafeWindow',
@@ -82,8 +77,8 @@ export default ({ command = 'dev', mode = 'dev' }) => {
             externalGlobals: {
               // vue: 'Vue',
               // 'element-ui': 'element-ui',
-              vue: ['Vue', 'https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.min.js'],
-              jszip: ['JSZip', 'https://cdn.jsdelivr.net/npm/jszip@2.6.1/dist/jszip.min.js'],
+              vue: ['Vue', 'https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js'],
+              jszip: ['JSZip', 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'],
               vant: ['vant', 'https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js'],
             },
           },

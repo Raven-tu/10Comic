@@ -8,27 +8,24 @@ importers:
 
   .:
     dependencies:
-      core-js:
-        specifier: ^3.23.3
-        version: 3.42.0
       jszip:
-        specifier: ^3.10.0
+        specifier: ^3.10.1
         version: 3.10.1
       vant:
-        specifier: ^2.12.48
-        version: 2.13.8(vue@2.7.16)
+        specifier: ^2.13.8
+        version: 2.13.8(vue@2.7.14)
       vue:
-        specifier: ^2.6.12
-        version: 2.7.16
+        specifier: 2.7.14
+        version: 2.7.14
     devDependencies:
       '@antfu/eslint-config':
         specifier: ^4.14.1
         version: 4.14.1(@vue/compiler-sfc@2.7.16)(eslint@9.28.0)(typescript@5.8.3)
       '@vitejs/plugin-vue2':
         specifier: ^2.3.3
-        version: 2.3.3(vite@6.3.5(@types/node@22.15.21)(less@4.3.0)(terser@5.39.2)(yaml@2.8.0))(vue@2.7.16)
+        version: 2.3.3(vite@6.3.5(@types/node@22.15.21)(less@4.3.0)(terser@5.39.2)(yaml@2.8.0))(vue@2.7.14)
       eslint:
-        specifier: ^9.0.0
+        specifier: ^9.28.0
         version: 9.28.0
       less:
         specifier: ^4.3.0
@@ -40,7 +37,7 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
       unplugin-auto-import:
-        specifier: ^19.2.0
+        specifier: ^19.3.0
         version: 19.3.0
       vite:
         specifier: ^6.3.5
@@ -645,6 +642,9 @@ packages:
   '@vue/babel-helper-vue-jsx-merge-props@1.4.0':
     resolution: {integrity: sha512-JkqXfCkUDp4PIlFdDQ0TdXoIejMtTHP67/pvxlgeY+u5k3LEdKuWZ3LK6xkxo52uDoABIVyRwqVkfLQJhk7VBA==}
 
+  '@vue/compiler-sfc@2.7.14':
+    resolution: {integrity: sha512-aNmNHyLPsw+sVvlQFQ2/8sjNuLtK54TC6cuKnVzAY93ks4ZBrvwQSnkkIh7bsbNhum5hJBS00wSDipQ937f5DA==}
+
   '@vue/compiler-sfc@2.7.16':
     resolution: {integrity: sha512-KWhJ9k5nXuNtygPU7+t1rX6baZeqOYLEforUPjgNDBnLicfHCoi48H87Q8XyLZOrNNsmhuwKqtpDQWjEFe6Ekg==}
 
@@ -894,9 +894,6 @@ packages:
 
   core-js-compat@3.43.0:
     resolution: {integrity: sha512-2GML2ZsCc5LR7hZYz4AXmjQw8zuy2T//2QntwdnpuYI7jteT6GVYJL7F6C2C57R7gSYrcqVW3lAALefdbhBLDA==}
-
-  core-js@3.42.0:
-    resolution: {integrity: sha512-Sz4PP4ZA+Rq4II21qkNqOEDTDrCvcANId3xpIgB34NDkWc3UduWj2dqEtN9yZIq8Dk3HyPI33x9sqqU5C8sr0g==}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -2421,8 +2418,8 @@ packages:
   vue-lazyload@1.2.3:
     resolution: {integrity: sha512-DC0ZwxanbRhx79tlA3zY5OYJkH8FYp3WBAnAJbrcuoS8eye1P73rcgAZhyxFSPUluJUTelMB+i/+VkNU/qVm7g==}
 
-  vue@2.7.16:
-    resolution: {integrity: sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==}
+  vue@2.7.14:
+    resolution: {integrity: sha512-b2qkFyOM0kwqWFuQmgd4o+uHGU7T+2z3T+WQp8UBjADfEv2n4FEMffzBmCKNP0IGzOEEfYjvtcC62xaSKeQDrQ==}
     deprecated: Vue 2 has reached EOL and is no longer actively maintained. See https://v2.vuejs.org/eol/ for more details.
 
   webpack-virtual-modules@0.6.2:
@@ -2974,10 +2971,10 @@ snapshots:
 
   '@vant/popperjs@1.3.0': {}
 
-  '@vitejs/plugin-vue2@2.3.3(vite@6.3.5(@types/node@22.15.21)(less@4.3.0)(terser@5.39.2)(yaml@2.8.0))(vue@2.7.16)':
+  '@vitejs/plugin-vue2@2.3.3(vite@6.3.5(@types/node@22.15.21)(less@4.3.0)(terser@5.39.2)(yaml@2.8.0))(vue@2.7.14)':
     dependencies:
       vite: 6.3.5(@types/node@22.15.21)(less@4.3.0)(terser@5.39.2)(yaml@2.8.0)
-      vue: 2.7.16
+      vue: 2.7.14
 
   '@vitest/eslint-plugin@1.2.1(eslint@9.28.0)(typescript@5.8.3)':
     dependencies:
@@ -2989,6 +2986,12 @@ snapshots:
       - supports-color
 
   '@vue/babel-helper-vue-jsx-merge-props@1.4.0': {}
+
+  '@vue/compiler-sfc@2.7.14':
+    dependencies:
+      '@babel/parser': 7.27.2
+      postcss: 8.5.3
+      source-map: 0.6.1
 
   '@vue/compiler-sfc@2.7.16':
     dependencies:
@@ -3275,8 +3278,6 @@ snapshots:
   core-js-compat@3.43.0:
     dependencies:
       browserslist: 4.25.0
-
-  core-js@3.42.0: {}
 
   core-util-is@1.0.3: {}
 
@@ -4920,7 +4921,7 @@ snapshots:
 
   unimport@4.2.0:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       escape-string-regexp: 5.0.0
       estree-walker: 3.0.3
       local-pkg: 1.1.1
@@ -4970,7 +4971,7 @@ snapshots:
 
   unplugin@2.3.5:
     dependencies:
-      acorn: 8.14.1
+      acorn: 8.15.0
       picomatch: 4.0.2
       webpack-virtual-modules: 0.6.2
 
@@ -4991,13 +4992,13 @@ snapshots:
       spdx-correct: 3.2.0
       spdx-expression-parse: 3.0.1
 
-  vant@2.13.8(vue@2.7.16):
+  vant@2.13.8(vue@2.7.14):
     dependencies:
       '@babel/runtime': 7.27.1
       '@vant/icons': 3.0.2
       '@vant/popperjs': 1.3.0
       '@vue/babel-helper-vue-jsx-merge-props': 1.4.0
-      vue: 2.7.16
+      vue: 2.7.14
       vue-lazyload: 1.2.3
 
   vite-plugin-monkey@5.0.8(vite@6.3.5(@types/node@22.15.21)(less@4.3.0)(terser@5.39.2)(yaml@2.8.0)):
@@ -5044,9 +5045,9 @@ snapshots:
 
   vue-lazyload@1.2.3: {}
 
-  vue@2.7.16:
+  vue@2.7.14:
     dependencies:
-      '@vue/compiler-sfc': 2.7.16
+      '@vue/compiler-sfc': 2.7.14
       csstype: 3.1.3
 
   webpack-virtual-modules@0.6.2: {}
