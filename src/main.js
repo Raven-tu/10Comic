@@ -60,7 +60,7 @@ async function loadUI(times) {
   Vue.prototype.$getType = getType
 
   if (isDev) {
-    loadStyle2('https://unpkg.com/vant@2.12/lib/index.css').then((res) => {
+    loadStyle2('https://unpkg.com/vant@2.13.8/lib/index.css').then((res) => {
       new Vue({
         el: `#${id}`,
         render: h => h(App),

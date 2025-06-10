@@ -52,10 +52,9 @@ export default ({ command = 'dev', mode = 'dev' }) => {
             'version': Package.version, // Update version as needed
             'description': '任意网页提供部分漫画网站搜索；漫画分章节下载(可直接下载/压缩下载/拼接下载)，可用于动漫之家、极速漫画、腾讯漫画、哔哩哔哩等35多个网站；对个别漫画网站修改阅读样式；可按需编写定义规则JSON导入以支持其他漫画网站',
             'author': Package.author,
-            'icon': 'https://live.bilibili.com/favicon.ico',
             'match': '*',
             'resource': {
-              vantcss: 'https://unpkg.com/vant@2.12/lib/index.css',
+              vantcss: 'https://unpkg.com/vant@2.13.8/lib/index.css',
             },
             'connect': '*',
             'grant': [
@@ -79,7 +78,7 @@ export default ({ command = 'dev', mode = 'dev' }) => {
               // 'element-ui': 'element-ui',
               vue: ['Vue', 'https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.min.js'],
               jszip: ['JSZip', 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'],
-              vant: ['vant', 'https://cdn.jsdelivr.net/npm/vant@2.12/lib/vant.min.js'],
+              vant: ['vant', 'https://cdn.jsdelivr.net/npm/vant@2.13.8/lib/vant.min.js'],
             },
           },
         }),
